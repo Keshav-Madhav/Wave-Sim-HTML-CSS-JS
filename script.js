@@ -9,20 +9,13 @@ let MODE = 'DRAG_CENTER'
 
 
 function update(i, y_t0, y_t1, c, gam, l, dx, dt) {
-    // let max_displacement = 0.4;
-    let displacement = 1 / (1 / (c*dt)**2 + gam/(2*dt))
-            * (1/dx**2 * (y_t1[i+1] - 2*y_t1[i] +  y_t1[i-1]) 
-               - 1/(c*dt)**2 * (y_t0[i] - 2*y_t1[i] )
-               + gam/(2*dt) * y_t0[i] 
-               - (l/ dx**2)**2 * (y_t1[i-2] - 4*y_t1[i-1] + 6*y_t1[i] -4*y_t1[i+1] + y_t1[i+2]));
-    
-    // if (Math.abs(displacement) > max_displacement) {
-    //   displacement = Math.sign(displacement) * max_displacement;
-    // }
-    
-    return displacement;
-  }
-  
+  return 1 / (1 / (c*dt)**2 + gam/(2*dt))
+          * (1/dx**2 * (y_t1[i+1] - 2*y_t1[i] +  y_t1[i-1]) 
+             - 1/(c*dt)**2 * (y_t0[i] - 2*y_t1[i] )
+             + gam/(2*dt) * y_t0[i] 
+             - (l/ dx**2)**2 * (y_t1[i-2] - 4*y_t1[i-1] + 6*y_t1[i] -4*y_t1[i+1] + y_t1[i+2]))
+}
+
 class String {
   constructor(N) {
     this.N = N
@@ -85,39 +78,39 @@ function dragString(s) {
   }
 }
 
-// For desktop
+
+addEventListener("mousemove", (e) => {  
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+},
+);
+
 addEventListener("mousedown", (e) => {
-    isDragging = true;
-  });
-  
-  addEventListener("mousemove", (e) => {  
-    if (isDragging) {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    }
-  });
-  
-  addEventListener("mouseup", (e) => {
-    isDragging = false;
-  });
-  
-  // For mobile
-  addEventListener("touchstart", (e) => {
-    isDragging = true;
+  isDragging = true;
+},
+);
+
+addEventListener("mouseup", (e) => {
+  isDragging = false;
+},
+);
+// For mobile
+addEventListener("touchstart", (e) => {
+  isDragging = true;
+  mouseX = e.touches[0].clientX;
+  mouseY = e.touches[0].clientY;
+});
+
+addEventListener("touchmove", (e) => {
+  if (isDragging) {
     mouseX = e.touches[0].clientX;
     mouseY = e.touches[0].clientY;
-  });
-  
-  addEventListener("touchmove", (e) => {
-    if (isDragging) {
-      mouseX = e.touches[0].clientX;
-      mouseY = e.touches[0].clientY;
-    }
-  });
-  
-  addEventListener("touchend", (e) => {
-    isDragging = false;
-  });
+  }
+});
+
+addEventListener("touchend", (e) => {
+  isDragging = false;
+});
 
 addEventListener("resize", () => setSize());
 function setSize() {
@@ -129,7 +122,7 @@ function anim() {
   requestAnimationFrame(anim);
   context.fillStyle = "rgba(0,0,0,1)";
   context.fillRect(0, 0, canvas.width, canvas.height);
-  for (let i=1; i--;) { 
+  for (let i=5; i--;) { 
     s.move(draw=(i==0))
     if (isDragging) dragString(s)
   }
